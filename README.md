@@ -180,6 +180,17 @@ ser-tools rea providers
 ser-tools rea analyze-javascript-application C:\caminho\app
 ```
 
+## 🔬 Estudo de Caso Prático: Engenharia Reversa do Chess.com (com.chess)
+
+A suíte foi validada em campo com a extração e auditoria profunda do aplicativo oficial do **Chess.com** (4.10.20-googleplay) a partir de um aparelho físico conectado via ADB:
+- **Extração Split APKs:** Particionamento AAB (ase.apk, split_config.arm64_v8a.apk, split_config.pt.apk, split_config.xxhdpi.apk) totalizando ~183 MB.
+- **Frontend & Runtime:** Interface reativa baseada em **React Native** com bundle compilado em **Hermes Bytecode (HBC)** (ssets/index.android.bundle), com bindings ultra-rápidos em C++ via **Nitro Modules** e persistência **MMKV**.
+- **Engine Nativa C++ (CEE):** Biblioteca nativa de 51 MB (libcee.so) portando o Stockfish para cálculo de variantes e bots offline (ggressive.bin, alanced.bin, etc.).
+- **Blindagem de Memória & Fair-Play:** Nota **100/100 (A+)** no Checksec ELF64 (PIE, NX, Stack Canaries, Fortify Source) e proteção ativa com **Approov** e DETECT_SCREEN_CAPTURE.
+- **Relatório Completo:** Consulte os detalhes em [reports/relatorio_engenharia_reversa_chess_com.md](reports/relatorio_engenharia_reversa_chess_com.md).
+
+---
+
 ---
 
 ## 🧪 Testes Automatizados

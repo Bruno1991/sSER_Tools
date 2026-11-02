@@ -4,13 +4,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from adb_tools.air_extractor import AirExtractor, parse_swf_header
+from ser_tools.android.air_extractor import AirExtractor, parse_swf_header
+from ser_tools.core.config import SuiteConfig
 
 
 class TestAirExtractor(unittest.TestCase):
     def setUp(self):
-        self.slither_apk = Path(r"C:\dev\s_ADB_Tools\extracted_apks\air.com.hypah.io.slither.apk")
-        self.expense_apk = Path(r"C:\dev\s_ADB_Tools\extracted_apks\com.smartexpenditure\com.smartexpenditure.apk")
+        config = SuiteConfig()
+        self.slither_apk = config.extracted_apks_dir / "air.com.hypah.io.slither.apk"
+        self.expense_apk = config.extracted_apks_dir / "com.smartexpenditure" / "com.smartexpenditure.apk"
 
     def test_is_air_apk_detection(self):
         if not self.slither_apk.exists():

@@ -457,7 +457,7 @@ class AirExtractor:
             "```",
             "",
             "---",
-            "*Relatório gerado automaticamente pelo s_ADB_Tools.*",
+            "*Relatório gerado automaticamente pelo s_SER_Tools.*",
         ])
 
         report_file.write_text("\n".join(lines), encoding="utf-8")

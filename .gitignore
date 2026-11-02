@@ -9,6 +9,7 @@ venv/
 .ser_temp/
 reports/*
 !reports/.gitkeep
+!reports/*.md
 tools/jadx/
 tools/ffdec/
 tools/*.zip
