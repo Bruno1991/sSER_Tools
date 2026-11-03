@@ -17,3 +17,5 @@ decompiled_sources/
 extracted_apks/
 capturas/*.png
 engineering-library/
+file/*.zip
+file/extracted_sprites/previews/

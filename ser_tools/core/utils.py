@@ -37,3 +37,4 @@ def sanitize_target_name(name: str) -> str:
     """Sanitiza strings de identificadores de pacotes ou arquivos para nomes seguros em disco."""
     clean = re.sub(r'[^\w\.-]', '_', name.strip())
     return clean or "unnamed_target"
+

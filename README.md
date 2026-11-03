@@ -6,7 +6,7 @@
 [![REA Engine](https://img.shields.io/badge/REA_Engine-morluto%2Frea-5c4ee5?style=flat-square)](https://github.com/morluto/rea)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-Suíte multiplataforma de alta performance para **Engenharia Reversa**, **Auditoria de Vulnerabilidades** e **Análise de Segurança de Software**. 
+Suíte multiplataforma de alta performance para **Engenharia Reversa**, **Auditoria de Vulnerabilidades**, **Análise de Segurança de Software** e **Forense de ROMs Arcade**. 
 
 Evoluída a partir do canivete suíço Android (`s_ADB_Tools`), a **s_SER_Tools** integra em uma arquitetura modular unificada:
 - **Ecossistema Android:** Gestão de aparelhos via ADB (USB e TCP/IP), extração de APKs e Split APKs/Bundles, descompilação Java/Kotlin (JADX) e engenharia reversa de Adobe AIR / Flash SWF (JPEXS FFDec).
@@ -14,6 +14,7 @@ Evoluída a partir do canivete suíço Android (`s_ADB_Tools`), a **s_SER_Tools*
 - **Diagnóstico de Mitigações (Checksec):** Verificação automatizada de ASLR, DEP/NX, Stack Canaries (/GS), SafeSEH, Control Flow Guard (CFG), PIE, RELRO e Authenticode.
 - **Aplicações Web & Electron:** Desempacotador nativo de pacotes `.asar` e auditor de configurações críticas de segurança (OWASP Electron Checklist).
 - **Auditoria de Segurança & SAST:** Varredura de credenciais e chaves vazadas (AWS, GCP, OpenAI, GitHub, Stripe, URIs de banco com senha), análise do `AndroidManifest.xml` (OWASP MASVS) e geração de **relatórios executivos em HTML responsivo, Markdown e JSON**.
+- **Retro & Arcade Gaming (Neo Geo MVS/AES):** Desmontagem de barramentos de ROMs arcade, decodificação planar 4BPP LSPC de C-ROMs (sprites 16x16) e S-ROM (Fix layer 8x8), decodificador de paletas RGB555 de 16 bits e exportação de sprite sheets em PNG com galeria visual HTML.
 - **Engine REA (morluto/rea):** Orquestração direta do motor *Reverse Engineer Anything*, expondo mais de 150 comandos CLI e 200 ferramentas MCP para agentes e assistentes de Inteligência Artificial.
 
 ---
@@ -38,7 +39,12 @@ Evoluída a partir do canivete suíço Android (`s_ADB_Tools`), a **s_SER_Tools*
 - **Checksec Multiplataforma:** Diagnóstico de mitigações de memória em executáveis Windows PE e bibliotecas Linux/Android ELF.
 - **Extrator de Padrões:** Varredura em binários extraindo URLs, endereços IPv4 e emails.
 
-### 4. ⚡ Integração REA Engine & MCP para IA
+### 4. 🎮 Retro & Arcade Gaming (SNK Neo Geo)
+- **Topologia de ROMs:** Identificação automática dos barramentos do cartucho: Program ROMs (68000), Character ROMs (LSPC Sprites), Fix ROM (HUD/Texto 8x8) e Audio (Z80/YM2610).
+- **Decodificação 4BPP Planar Intercalada:** Reconstrução em tempo real de tiles 16x16 a partir de C-ROMs pares/ímpares nos 4 quadrantes LSPC.
+- **Atlas Gráficos & Sprite Sheets:** Exportação de folhas de sprites em PNG de alta definição com transparência alfa e galerias visuais interativas em HTML5.
+
+### 5. ⚡ Integração REA Engine & MCP para IA
 - Conexão nativa com a engine **REA** ([morluto/rea](https://github.com/morluto/rea)).
 - Suporte a Model Context Protocol (MCP) para conectar assistentes de IA (Antigravity IDE, Claude Code, Cursor, Codex).
 - Diagnóstico integrado (`ser-tools doctor`).
@@ -72,6 +78,11 @@ c:\dev\s_SER_Tools\
 │   │   ├── secrets_scanner.py   # Scanner de tokens e credenciais vazadas
 │   │   ├── android_auditor.py   # Auditor de AndroidManifest.xml (OWASP MASVS)
 │   │   └── suite_auditor.py     # Orquestrador universal de auditoria
+│   ├── retro\              # Engenharia Reversa de ROMs e Arcade Gaming (Neo Geo)
+│   │   ├── neogeo_rom.py   # Mapeador de barramentos P, C, S, M, V de pacotes ZIP
+│   │   ├── neogeo_tile_decoder.py # Decodificador vetorizado 16x16 C-ROM e 8x8 Fix Layer
+│   │   ├── neogeo_palette.py # Decodificador de palavras de cor 16-bit (RGB555 + Dark bit)
+│   │   └── sprite_extractor.py # Gerador de Sprite Sheets e galerias visuais HTML
 │   ├── rea_engine\         # Integração com morluto/rea
 │   │   ├── client.py       # Wrapper de comandos CLI do REA
 │   │   ├── mcp_bridge.py   # Provedor de configuração de servidor MCP para IA
@@ -82,16 +93,16 @@ c:\dev\s_SER_Tools\
 ├── scripts\                # Scripts auxiliares e automações do desenvolvedor
 │   ├── doctor.py           # Diagnóstico rápido de ambiente
 │   ├── setup_tools.py      # Instalador e verificador automatizado de ferramentas (JADX/FFDec)
-│   └── quick_audit.py      # Execução de auditoria expressa com exportação de relatórios
+│   ├── quick_audit.py      # Execução de auditoria expressa com exportação de relatórios
+│   └── extract_kof98_sprites.py # Automação de extração e galeria visual do KOF '98
 ├── adb_tools\              # Fachada de compatibilidade retroativa (re-exporta ser_tools)
 ├── tools\
 │   ├── jadx\               # Motor JADX v1.5.6 (jadx.bat, jadx-gui.bat)
 │   └── ffdec\              # Motor JPEXS FFDec v26.3.0 (ffdec.jar, ffdec.bat)
-├── reports\                # Relatórios de segurança gerados (.html, .md, .json)
-├── extracted_apks\          # Diretório dos APKs extraídos
-├── decompiled_sources\     # Diretório dos códigos-fonte descompilados
-├── capturas\               # Screenshots salvas dos dispositivos
-├── tests\                  # Suíte de testes automatizados com pytest (35+ testes)
+├── reports\                # Relatórios técnicos (.html, .md, .json)
+├── file\                   # Diretório de ROMs e gráficos extraídos
+│   └── extracted_sprites\  # Folhas de sprites PNG e galeria interativa HTML
+├── tests\                  # Suíte de testes automatizados com pytest (45+ testes)
 ├── ser-tools.bat           # Lançador principal no Windows (UTF-8)
 ├── ser.bat                 # Alias rápido do lançador (UTF-8)
 ├── adb-tools.bat           # Alias legado de compatibilidade (UTF-8)
@@ -114,6 +125,21 @@ ser-tools
 ---
 
 ### 2. Comandos Diretos via Linha de Comando (CLI)
+
+#### 🎮 Engenharia Reversa de ROMs Arcade (Neo Geo)
+```cmd
+# Inspecionar arquitetura e barramentos da ROM (P, C, S, M, V)
+ser-tools rom inspect file/kof98.zip
+
+# Extrair a camada fixa (HUD, texto, fontes e numerais 8x8)
+ser-tools rom fix file/kof98.zip --output file/extracted_sprites/hud_fonts.png
+
+# Extrair folha de sprites de personagens (C-ROMs 16x16)
+ser-tools rom sprites file/kof98.zip --pair 1 --start 10000 --count 512 --cols 16 --output file/extracted_sprites/kyo_anim.png
+
+# Extrair com paleta forense de alto contraste cromático
+ser-tools rom sprites file/kof98.zip --pair 4 --start 25000 --count 512 --palette contrast --output file/extracted_sprites/boss_rugal.png
+```
 
 #### 🩺 Diagnóstico e Status da Suíte
 ```cmd
@@ -176,19 +202,11 @@ ser-tools gui extracted_apks/com.whatsapp/base.apk
 ser-tools screenshot
 ```
 
-#### ⚡ Comandos da Engine REA (morluto/rea)
-```cmd
-# Listar provedores e motores configurados no REA
-ser-tools rea providers
-
-# Analisar aplicação JavaScript/Electron com REA
-ser-tools rea analyze-javascript-application C:\caminho\app
-```
-
 ---
 
-## 🔬 Estudo de Caso Prático: Engenharia Reversa do Chess.com (com.chess)
+## 🔬 Estudos de Caso Práticos
 
+### 1. Engenharia Reversa do Chess.com (com.chess)
 A suíte foi validada em campo com a extração e auditoria profunda do aplicativo oficial do **Chess.com** (`v4.10.20-googleplay`) a partir de um aparelho físico conectado via ADB:
 - **Extração Split APKs:** Particionamento AAB (`base.apk`, `split_config.arm64_v8a.apk`, `split_config.pt.apk`, `split_config.xxhdpi.apk`) totalizando ~183 MB.
 - **Frontend & Runtime:** Interface reativa baseada em **React Native** com bundle compilado em **Hermes Bytecode (HBC)** (`assets/index.android.bundle`), com bindings ultra-rápidos em C++ via **Nitro Modules** e persistência **MMKV**.
@@ -196,11 +214,18 @@ A suíte foi validada em campo com a extração e auditoria profunda do aplicati
 - **Blindagem de Memória & Fair-Play:** Nota **100/100 (A+)** no Checksec ELF64 (PIE, NX, Stack Canaries, Fortify Source) e proteção ativa com **Approov** e `DETECT_SCREEN_CAPTURE`.
 - **Relatório Completo:** Consulte os detalhes em [reports/relatorio_engenharia_reversa_chess_com.md](reports/relatorio_engenharia_reversa_chess_com.md).
 
+### 2. Extração Gráfica e Desmontagem Arcade: The King of Fighters '98
+Desmontagem completa da ROM Arcade MVS original do **KOF '98** (`file/kof98.zip`):
+- **Barramentos Gráficos:** 64 MB de memória de sprites LSPC decodificados em 4 pares de C-ROMs (**524.288 tiles de 16x16 pixels**).
+- **Camada Fix:** Decodificação integral de todos os 4.096 tiles 8x8 de fontes, barras de vida e contadores de round.
+- **Galeria Visual HTML:** Geração automatizada de visualizador interativo em HTML5 e folhas de sprites de personagens (Kyo, Iori, Terry, Mai, Leona, Athena, Omega Rugal).
+- **Relatório Completo:** Consulte os detalhes em [reports/relatorio_extracao_sprites_kof98.md](reports/relatorio_extracao_sprites_kof98.md).
+
 ---
 
 ## 🧪 Testes Automatizados
 
-A suíte possui cobertura de testes automatizados com `pytest`:
+A suíte possui cobertura de testes automatizados com `pytest` cobrindo todos os módulos:
 
 ```cmd
 pytest -v

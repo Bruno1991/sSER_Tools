@@ -113,6 +113,17 @@ def main(argv: Optional[List[str]] = None) -> int:
     rea_p.add_argument("subcmd", help="Comando REA (ex: analyze-javascript-application, analyze-pe-binary, providers)")
     rea_p.add_argument("target", nargs="?", help="Alvo para o comando REA")
 
+    # 17. rom
+    rom_p = subparsers.add_parser("rom", help="Engenharia reversa e extra??o de sprites de ROMs Arcade (Neo Geo)")
+    rom_p.add_argument("subaction", choices=["inspect", "sprites", "fix"], help="A??o: inspect (inspeciona), sprites (sprite sheet), fix (camada HUD)")
+    rom_p.add_argument("target", help="Caminho do arquivo ZIP da ROM (ex: file/kof98.zip)")
+    rom_p.add_argument("--pair", type=int, default=1, help="?ndice do par de C-ROMs (1 a 4)")
+    rom_p.add_argument("--start", type=int, default=1, help="Tile inicial para extra??o")
+    rom_p.add_argument("--count", type=int, default=256, help="Quantidade de tiles a extrair")
+    rom_p.add_argument("--cols", type=int, default=16, help="N?mero de colunas no sprite sheet")
+    rom_p.add_argument("--palette", default="arcade_p1", choices=["arcade_p1", "contrast", "grayscale", "neon_crt"], help="Paleta de cor")
+    rom_p.add_argument("--output", "-o", help="Caminho do arquivo PNG ou diret?rio de sa?da")
+
     args = parser.parse_args(argv)
 
     if args.command in ("doctor", "status"):
@@ -275,6 +286,40 @@ def main(argv: Optional[List[str]] = None) -> int:
         if res["raw_stderr"]:
             console.print(f"[yellow]{res['raw_stderr']}[/yellow]")
         return 0 if res["success"] else 1
+
+    elif args.command == "rom":
+        from ..retro import NeoGeoRomPackage, NeoGeoSpriteExtractor
+        pkg = NeoGeoRomPackage(args.target)
+
+        if args.subaction == "inspect":
+            info = pkg.inspect()
+            console.print(f"[bold green]Pacote Neo Geo:[/bold green] {info['archive_name']} ({format_bytes(info['archive_size_bytes'])})")
+            console.print(f"C-ROM Sprites: {info['total_c_pairs']} pares, {info['total_sprite_tiles']:,} tiles ({format_bytes(info['total_sprite_bytes'])})")
+            console.print(f"Fix ROM (S1): {info['fix_rom']} ({info['fix_tiles']:,} tiles)")
+            console.print(f"Program ROMs: {info['program_roms']}")
+            console.print(f"Sound ROMs: {info['sound_roms']}")
+            return 0
+
+        extractor = NeoGeoSpriteExtractor(pkg)
+        extractor.set_palette(args.palette)
+
+        if args.subaction == "fix":
+            out_path = Path(args.output) if args.output else Path(f"fix_{Path(args.target).stem}.png")
+            extractor.extract_fix_sheet(output_path=out_path)
+            console.print(f"[bold green]Camada Fix extra?da para:[/bold green] {out_path}")
+            return 0
+
+        elif args.subaction == "sprites":
+            out_path = Path(args.output) if args.output else Path(f"sprites_{Path(args.target).stem}_pair{args.pair}_tile{args.start}.png")
+            extractor.extract_sheet(
+                pair_index=args.pair,
+                start_tile=args.start,
+                count=args.count,
+                cols=args.cols,
+                output_path=out_path,
+            )
+            console.print(f"[bold green]Sprite sheet extra?do com sucesso para:[/bold green] {out_path}")
+            return 0
 
     return 0
 

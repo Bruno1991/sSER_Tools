@@ -96,3 +96,4 @@ def install_tools(force: bool = False) -> int:
 if __name__ == "__main__":
     force_reinstall = "--force" in sys.argv
     sys.exit(install_tools(force=force_reinstall))
+

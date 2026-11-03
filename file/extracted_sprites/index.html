@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria de Sprites KOF '98 - s_SER_Tools</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --accent: #58a6ff;
+            --accent-gold: #f1e05a;
+            --text: #c9d1d9;
+            --text-title: #f0f6fc;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 24px;
+        }
+        header {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        h1 {
+            color: var(--text-title);
+            margin: 0 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .kof-tag {
+            background: #da3633;
+            color: white;
+            font-size: 14px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .meta-item {
+            background: #090d13;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+        .meta-label {
+            font-size: 12px;
+            color: #8b949e;
+            text-transform: uppercase;
+        }
+        .meta-val {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-title);
+            margin-top: 4px;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h3 {
+            margin: 0;
+            font-size: 15px;
+            color: var(--text-title);
+        }
+        .badge {
+            background: #1f6feb;
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+        .img-container {
+            background: #05070a;
+            background-image: 
+                linear-gradient(45deg, #0e131b 25%, transparent 25%), 
+                linear-gradient(-45deg, #0e131b 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #0e131b 75%), 
+                linear-gradient(-45deg, transparent 75%, #0e131b 75%);
+            background-size: 16px 16px;
+            background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 280px;
+        }
+        .img-container img {
+            image-rendering: pixelated;
+            max-width: 100%;
+            height: auto;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: transform 0.2s ease;
+        }
+        .img-container img:hover {
+            transform: scale(1.4);
+            cursor: zoom-in;
+            z-index: 10;
+        }
+        .desc {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #8b949e;
+            margin: 0;
+        }
+        code {
+            background: rgba(110,118,129,0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #f0883e;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>
+            <span>SNK Neo Geo Arcade — The King of Fighters '98</span>
+            <span class="kof-tag">KOF '98</span>
+        </h1>
+        <p>Sprite Sheets e Camada Gráfica LSPC extraídos via <code>s_SER_Tools v3.0</code> (Módulo Retro & Arcade).</p>
+        <div class="meta-grid">
+            <div class="meta-item">
+                <div class="meta-label">Total de Sprites 16x16</div>
+                <div class="meta-val">524,288 tiles</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Memória C-ROM</div>
+                <div class="meta-val">64.00 MB (8 ROMs)</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Camada Fix (HUD)</div>
+                <div class="meta-val">4,096 tiles (8x8)</div>
+            </div>
+            <div class="meta-item">
+                <div class="meta-label">Formato do Barramento</div>
+                <div class="meta-val">4BPP Planar Intercalado LSPC</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="gallery-grid">
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Camada Fix (S-ROM: kof98_s1.rom)</h3>
+                <span class="badge">4.096 Tiles 8x8 (HUD & Fontes)</span>
+            </div>
+            <div class="img-container">
+                <img src="kof98_fix_hud_fonts.png" alt="Fix Layer">
+            </div>
+            <p class="desc">Textos do sistema, fontes de diálogo, contador de tempo, barra de energia e logos de vitória.</p>
+        </div>
+    
+        <div class="card">
+            <div class="card-header">
+                <h3>Abertura, SNK Logo e Telas de Título</h3>
+                <span class="badge">C-ROM Par 1 | Tiles #1 - #513</span>
+            </div>
+            <div class="img-container">
+                <img src="pair1_intro_title_tiles.png" alt="Abertura, SNK Logo e Telas de Título">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair1_intro_title_tiles.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Retratos dos Lutadores e Seleção</h3>
+                <span class="badge">C-ROM Par 1 | Tiles #2,000 - #2,512</span>
+            </div>
+            <div class="img-container">
+                <img src="pair1_fighter_portraits_select.png" alt="Retratos dos Lutadores e Seleção">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair1_fighter_portraits_select.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Animações de Combate (Kyo Kusanagi & Iori Team)</h3>
+                <span class="badge">C-ROM Par 1 | Tiles #10,000 - #10,512</span>
+            </div>
+            <div class="img-container">
+                <img src="pair1_character_anim_kusanagi.png" alt="Animações de Combate (Kyo Kusanagi & Iori Team)">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair1_character_anim_kusanagi.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Animações de Combate (Terry, Andy & Joe Team)</h3>
+                <span class="badge">C-ROM Par 1 | Tiles #40,000 - #40,512</span>
+            </div>
+            <div class="img-container">
+                <img src="pair1_character_anim_fatal_fury.png" alt="Animações de Combate (Terry, Andy & Joe Team)">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair1_character_anim_fatal_fury.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Equipe Art of Fighting (Ryo, Robert, Takuma)</h3>
+                <span class="badge">C-ROM Par 2 | Tiles #500 - #1,012</span>
+            </div>
+            <div class="img-container">
+                <img src="pair2_character_anim_art_of_fighting.png" alt="Equipe Art of Fighting (Ryo, Robert, Takuma)">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair2_character_anim_art_of_fighting.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Equipe Ikari Warriors (Leona, Ralf, Clark)</h3>
+                <span class="badge">C-ROM Par 2 | Tiles #25,000 - #25,512</span>
+            </div>
+            <div class="img-container">
+                <img src="pair2_character_anim_ikari_team.png" alt="Equipe Ikari Warriors (Leona, Ralf, Clark)">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair2_character_anim_ikari_team.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Equipe Psycho Soldier (Athena, Kensou, Chin)</h3>
+                <span class="badge">C-ROM Par 3 | Tiles #1,000 - #1,512</span>
+            </div>
+            <div class="img-container">
+                <img src="pair3_character_anim_psycho_soldier.png" alt="Equipe Psycho Soldier (Athena, Kensou, Chin)">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair3_character_anim_psycho_soldier.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Equipe Feminina (Mai, King, Chizuru)</h3>
+                <span class="badge">C-ROM Par 3 | Tiles #30,000 - #30,512</span>
+            </div>
+            <div class="img-container">
+                <img src="pair3_character_anim_womens_team.png" alt="Equipe Feminina (Mai, King, Chizuru)">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair3_character_anim_womens_team.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Equipe Coreia (Kim, Chang, Choi)</h3>
+                <span class="badge">C-ROM Par 4 | Tiles #1,500 - #2,012</span>
+            </div>
+            <div class="img-container">
+                <img src="pair4_character_anim_korea_team.png" alt="Equipe Coreia (Kim, Chang, Choi)">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair4_character_anim_korea_team.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Boss Omega Rugal e Efeitos Especiais (SDks/Super)</h3>
+                <span class="badge">C-ROM Par 4 | Tiles #25,000 - #25,512</span>
+            </div>
+            <div class="img-container">
+                <img src="pair4_boss_rugal_omega_special.png" alt="Boss Omega Rugal e Efeitos Especiais (SDks/Super)">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair4_boss_rugal_omega_special.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Análise Forense de Bitplanes (Alto Contraste)</h3>
+                <span class="badge">C-ROM Par 4 | Tiles #25,000 - #25,512</span>
+            </div>
+            <div class="img-container">
+                <img src="pair4_boss_rugal_high_contrast_forensic.png" alt="Análise Forense de Bitplanes (Alto Contraste)">
+            </div>
+            <p class="desc">Arquivo gerado: <code>pair4_boss_rugal_high_contrast_forensic.png</code> (Grade 16 colunas &times; 16px, 4BPP planar).</p>
+        </div>
+        
+    </div>
+</body>
+</html>
