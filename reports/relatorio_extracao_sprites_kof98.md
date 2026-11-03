@@ -1,10 +1,10 @@
 # Relatório Técnico de Engenharia Reversa e Extração Gráfica: SNK Neo Geo (The King of Fighters '98)
 
-**Data da Análise:** 02 de Novembro de 2026  
-**Ferramenta Utilizada:** `s_SER_Tools v3.0` (Módulo Retro & Arcade `ser_tools.retro`)  
-**Arquivo Fonte:** `file/kof98.zip` (38.80 MB comprimido / ~85 MB descomprimido)  
-**Sistema Alvo:** Arcade SNK Neo Geo MVS (Multi Video System) / AES (Advanced Entertainment System)  
-**Plataforma Gráfica:** Coprocessador de Linha de Sprites LSPC (Line Sprite and Priority Circuitry)  
+**Data da Análise:** 02 de Novembro de 2026
+**Ferramenta Utilizada:** `s_SER_Tools v3.0` (Módulo Retro & Arcade `ser_tools.retro`)
+**Arquivo Fonte:** `file/kof98.zip` (38.80 MB comprimido / ~85 MB descomprimido)
+**Sistema Alvo:** Arcade SNK Neo Geo MVS (Multi Video System) / AES (Advanced Entertainment System)
+**Plataforma Gráfica:** Coprocessador de Linha de Sprites LSPC (Line Sprite and Priority Circuitry)
 
 ---
 
@@ -149,3 +149,4 @@ A capacidade de engenharia reversa de ROMs Neo Geo foi implementada e testada co
 * **Suíte de Testes:** 46 testes no total (**42 aprovados, 4 skipped**, 100% verde).
 * **Tempo de Processamento:** Menos de 6 segundos para decodificar e exportar mais de 5.000 tiles em PNG de alta resolução.
 * **Integridade:** Zero artefatos visuais ou desalinhamentos de bitplanes, com decodificação fiel ao comportamento do chip LSPC em hardware real.
+

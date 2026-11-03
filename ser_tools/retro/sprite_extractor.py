@@ -177,3 +177,4 @@ class NeoGeoSpriteExtractor:
                 generated_files.append(out_file)
 
         return generated_files
+

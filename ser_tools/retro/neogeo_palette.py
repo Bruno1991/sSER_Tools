@@ -124,3 +124,4 @@ class NeoGeoPalette:
             ],
         }
         return presets.get(name.lower(), presets["arcade_p1"])
+

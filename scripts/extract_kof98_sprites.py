@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Script de automação para extração e catalogação visual dos sprites do KOF98.
+"""Script de automação para extração e catalogação visual dos sprites e animações do KOF98.
 
 Analisa o arquivo C:\\dev\\s_SER_Tools\\file\\kof98.zip, decodifica os barramentos C-ROM e S-ROM,
-e gera sprite sheets em PNG de alta resolução junto com uma galeria visual HTML autocontida.
+e gera sprite sheets em PNG, GIFs animados da abertura/combate e uma galeria visual HTML autocontida.
 """
 
 from pathlib import Path
@@ -13,9 +13,113 @@ repo_root = Path(__file__).resolve().parent.parent
 if str(repo_root) not in sys.path:
     sys.path.insert(0, str(repo_root))
 
+from PIL import Image, ImageDraw
 from ser_tools.core.logger import get_console, print_banner
 from ser_tools.core.utils import format_bytes
-from ser_tools.retro import NeoGeoPalette, NeoGeoRomPackage, NeoGeoSpriteExtractor
+from ser_tools.retro import NeoGeoPalette, NeoGeoRomPackage, NeoGeoSpriteExtractor, NeoGeoTileDecoder
+
+
+def generate_animated_gifs(pkg: NeoGeoRomPackage, out_dir: Path, console):
+    """Gera animações em GIF da abertura arcade, combate e efeitos de chamas."""
+    console.print("\n[bold cyan][*] Gerando animações em GIF da Abertura e Lutadores...[/bold cyan]")
+    c1, c2 = pkg.get_c_pair_data(1)
+    pal_arcade = NeoGeoPalette.get_preset("arcade_p1")
+
+    # 1. Fighter Stance / Intro Loop (Tiles 512..1024, 24 frames, 4x8 tiles cada = 64x128 -> 128x256)
+    fighter_frames = []
+    scale = 2
+    for f in range(24):
+        start_t = 512 + f * 32
+        im = Image.new("RGBA", (4 * 16, 8 * 16), (0, 0, 0, 0))
+        for c in range(4):
+            for r in range(8):
+                t = start_t + (c * 8 + r)
+                tile_m = NeoGeoTileDecoder.decode_sprite_tile(c1[t * 64 : (t + 1) * 64], c2[t * 64 : (t + 1) * 64])
+                for y in range(16):
+                    for x in range(16):
+                        im.putpixel((c * 16 + x, r * 16 + y), pal_arcade[tile_m[y, x]])
+        if scale > 1:
+            im = im.resize((4 * 16 * scale, 8 * 16 * scale), resample=Image.Resampling.NEAREST)
+        fighter_frames.append(im)
+
+    gif_fighter = out_dir / "kof98_fighter_intro_anim.gif"
+    fighter_frames[0].save(
+        gif_fighter,
+        save_all=True,
+        append_images=fighter_frames[1:],
+        duration=100,
+        loop=0,
+        disposal=2,
+    )
+    console.print(f"  [green]✓[/green] Animação de Combate -> [cyan]{gif_fighter.name}[/cyan] (24 frames)")
+
+    # 2. Kyo Kusanagi Flame Intro (Tiles 10000..10512, 16 frames, 4x8 tiles cada)
+    kyo_frames = []
+    for f in range(16):
+        start_t = 10000 + f * 32
+        im = Image.new("RGBA", (4 * 16, 8 * 16), (0, 0, 0, 0))
+        for c in range(4):
+            for r in range(8):
+                t = start_t + (c * 8 + r)
+                tile_m = NeoGeoTileDecoder.decode_sprite_tile(c1[t * 64 : (t + 1) * 64], c2[t * 64 : (t + 1) * 64])
+                for y in range(16):
+                    for x in range(16):
+                        im.putpixel((c * 16 + x, r * 16 + y), pal_arcade[tile_m[y, x]])
+        if scale > 1:
+            im = im.resize((4 * 16 * scale, 8 * 16 * scale), resample=Image.Resampling.NEAREST)
+        kyo_frames.append(im)
+
+    gif_kyo = out_dir / "kof98_kyo_flame_intro.gif"
+    kyo_frames[0].save(
+        gif_kyo,
+        save_all=True,
+        append_images=kyo_frames[1:],
+        duration=100,
+        loop=0,
+        disposal=2,
+    )
+    console.print(f"  [green]✓[/green] Kyo Kusanagi Chamas -> [cyan]{gif_kyo.name}[/cyan] (16 frames)")
+
+    # 3. Abertura Arcade Completa (320x224 com logo do KOF98 e lutador animado)
+    title_banner = Image.new("RGBA", (13 * 16, 12 * 16), (0, 0, 0, 0))
+    for c in range(13):
+        for r in range(12):
+            t = 128 + (r * 13 + c)
+            tile_m = NeoGeoTileDecoder.decode_sprite_tile(c1[t * 64 : (t + 1) * 64], c2[t * 64 : (t + 1) * 64])
+            for y in range(16):
+                for x in range(16):
+                    title_banner.putpixel((c * 16 + x, r * 16 + y), pal_arcade[tile_m[y, x]])
+
+    arcade_w = 320
+    arcade_h = 224
+    composite_frames = []
+    banner_scaled = title_banner.resize((156, 144), resample=Image.Resampling.NEAREST)
+
+    for f_im in fighter_frames[:16]:
+        canvas = Image.new("RGBA", (arcade_w, arcade_h), (8, 12, 18, 255))
+        draw = ImageDraw.Draw(canvas)
+        for y in range(0, arcade_h, 2):
+            draw.line([(0, y), (arcade_w, y)], fill=(4, 6, 10, 80))
+
+        canvas.paste(banner_scaled, (10, 35), banner_scaled)
+        # Sombra no chão
+        fighter_x, fighter_y = 190, 65
+        draw.ellipse([fighter_x + 8, fighter_y + 120, fighter_x + 56, fighter_y + 132], fill=(2, 4, 8, 180))
+        # Lutador em escala original 1x (64x128)
+        f_small = f_im.resize((64, 128), resample=Image.Resampling.NEAREST)
+        canvas.paste(f_small, (fighter_x, fighter_y), f_small)
+        draw.rectangle([0, 0, arcade_w - 1, arcade_h - 1], outline=(48, 54, 61, 255), width=2)
+        composite_frames.append(canvas)
+
+    gif_opening = out_dir / "kof98_opening_arcade_intro.gif"
+    composite_frames[0].save(
+        gif_opening,
+        save_all=True,
+        append_images=composite_frames[1:],
+        duration=110,
+        loop=0,
+    )
+    console.print(f"  [green]✓[/green] Abertura Arcade Completa -> [cyan]{gif_opening.name}[/cyan] (320x224, 16 frames)")
 
 
 def extract_kof98():
@@ -49,9 +153,7 @@ def extract_kof98():
     console.print(f"[bold green][✓] Fix Layer exportada para:[/bold green] {fix_out}")
 
     # 2. Extrai folhas de sprites estratégicas (Intros, Telas de Título, Golpes e Lutadores)
-    # Seleção de ranges representativos em cada um dos 4 pares de C-ROMs
     targets = [
-        # (Par, Início, Quantidade, Colunas, Nome, Descrição)
         (1, 1, 512, 16, "pair1_intro_title_tiles.png", "Abertura, SNK Logo e Telas de Título"),
         (1, 2000, 512, 16, "pair1_fighter_portraits_select.png", "Retratos dos Lutadores e Seleção"),
         (1, 10000, 512, 16, "pair1_character_anim_kusanagi.png", "Animações de Combate (Kyo Kusanagi & Iori Team)"),
@@ -82,7 +184,7 @@ def extract_kof98():
         extracted_sheets.append((fname, desc, pair_idx, start, count))
         console.print(f"  [green]✓[/green] Par {pair_idx} | Tiles {start:05d}..{start+count:05d} -> [cyan]{fname}[/cyan] ({desc})")
 
-    # Também exporta uma versão em alto contraste forense do Boss/Efeitos para demonstrar a análise
+    # Versão em alto contraste forense do Boss/Efeitos
     contrast_sheet = out_dir / "pair4_boss_rugal_high_contrast_forensic.png"
     extractor.set_palette("contrast")
     extractor.extract_sheet(
@@ -96,10 +198,13 @@ def extract_kof98():
     extracted_sheets.append(("pair4_boss_rugal_high_contrast_forensic.png", "Análise Forense de Bitplanes (Alto Contraste)", 4, 25000, 512))
     console.print(f"  [green]✓[/green] Par 4 | Análise Forense de Bitplanes -> [cyan]{contrast_sheet.name}[/cyan]")
 
-    elapsed = time.time() - t0
-    console.print(f"\n[bold green][✓] Extração finalizada com sucesso em {elapsed:.2f}s![/bold green]")
+    # 3. Gera Animações em GIF
+    generate_animated_gifs(pkg, out_dir, console)
 
-    # 3. Gera a Galeria Visual HTML
+    elapsed = time.time() - t0
+    console.print(f"\n[bold green][✓] Extração e animações finalizadas com sucesso em {elapsed:.2f}s![/bold green]")
+
+    # 4. Gera a Galeria Visual HTML
     html_file = out_dir / "index.html"
     generate_html_gallery(html_file, info, extracted_sheets, fix_out.name)
     console.print(f"[bold green][✓] Galeria visual interativa gerada em:[/bold green] {html_file}")
@@ -308,6 +413,51 @@ def generate_html_gallery(html_path: Path, rom_info: dict, sheets: list, fix_fna
             </div>
         </div>
     </header>
+
+    <!-- SEÇÃO DE ANIMAÇÕES EM GIF -->
+    <section style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+        <h2 style="color: var(--text-title); margin: 0 0 16px 0; display: flex; align-items: center; gap: 10px;">
+            <span>🎬 Animações da Abertura & Lutadores em GIF</span>
+            <span style="background: #238636; color: white; font-size: 12px; padding: 2px 8px; border-radius: 12px;">ATIVO</span>
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            <div style="background: #090d13; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; text-align: center;">
+                <div style="padding: 12px; font-weight: bold; color: var(--text-title); border-bottom: 1px solid var(--border);">
+                    Abertura Arcade Completa (320x224)
+                </div>
+                <div style="padding: 16px; min-height: 240px; display: flex; align-items: center; justify-content: center;">
+                    <img src="kof98_opening_arcade_intro.gif" style="max-width: 100%; border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.6);" alt="Abertura Arcade KOF 98">
+                </div>
+                <div style="padding: 10px; font-size: 12px; color: #8b949e; border-top: 1px solid var(--border);">
+                    <code>kof98_opening_arcade_intro.gif</code> (16 frames)
+                </div>
+            </div>
+
+            <div style="background: #090d13; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; text-align: center;">
+                <div style="padding: 12px; font-weight: bold; color: var(--text-title); border-bottom: 1px solid var(--border);">
+                    Animação de Combate / Stance Loop
+                </div>
+                <div style="padding: 16px; min-height: 240px; display: flex; align-items: center; justify-content: center;">
+                    <img src="kof98_fighter_intro_anim.gif" style="max-height: 230px; image-rendering: pixelated; box-shadow: 0 4px 12px rgba(0,0,0,0.6);" alt="Lutador Stance Loop">
+                </div>
+                <div style="padding: 10px; font-size: 12px; color: #8b949e; border-top: 1px solid var(--border);">
+                    <code>kof98_fighter_intro_anim.gif</code> (24 frames)
+                </div>
+            </div>
+
+            <div style="background: #090d13; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; text-align: center;">
+                <div style="padding: 12px; font-weight: bold; color: var(--text-title); border-bottom: 1px solid var(--border);">
+                    Kyo Kusanagi Chamas / Special Intro
+                </div>
+                <div style="padding: 16px; min-height: 240px; display: flex; align-items: center; justify-content: center;">
+                    <img src="kof98_kyo_flame_intro.gif" style="max-height: 230px; image-rendering: pixelated; box-shadow: 0 4px 12px rgba(0,0,0,0.6);" alt="Kyo Kusanagi Flames">
+                </div>
+                <div style="padding: 10px; font-size: 12px; color: #8b949e; border-top: 1px solid var(--border);">
+                    <code>kof98_kyo_flame_intro.gif</code> (16 frames)
+                </div>
+            </div>
+        </div>
+    </section>
 
     <div class="gallery-grid">
         {"".join(cards_html)}

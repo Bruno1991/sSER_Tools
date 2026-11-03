@@ -174,3 +174,4 @@ class NeoGeoRomPackage:
             "program_roms": self.p_roms,
             "sound_roms": {"m_rom": self.m_rom, "v_roms": self.v_roms},
         }
+

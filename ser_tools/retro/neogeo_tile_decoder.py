@@ -101,3 +101,4 @@ class NeoGeoTileDecoder:
             fix_matrix[line, 7] = (b_c67 >> 4) & 0x0F
 
         return fix_matrix
+
