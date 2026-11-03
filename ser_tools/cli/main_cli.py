@@ -14,6 +14,7 @@ from ..android.ffdec_manager import FfdecManager
 from ..audit.suite_auditor import SuiteAuditor
 from ..core.config import SuiteConfig
 from ..core.logger import get_console, print_banner
+from ..core.utils import format_bytes
 from ..desktop_bin.checksec import ChecksecScanner
 from ..desktop_bin.pe_analyzer import PEAnalyzer
 from ..desktop_bin.strings_extractor import StringsExtractor
@@ -156,7 +157,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         res = ext.extract_package(args.package, out_dir)
         console.print(f"[bold green]✔ Extração concluída em:[/bold green] {res.output_dir}")
         for f in res.files:
-            console.print(f"   - {f.name} ({f.stat().st_size} bytes)")
+            console.print(f"   - {f.name} ({format_bytes(f.stat().st_size)})")
         return 0
 
     elif args.command == "decompile":

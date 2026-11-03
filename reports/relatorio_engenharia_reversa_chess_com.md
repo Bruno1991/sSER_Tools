@@ -1,11 +1,11 @@
 # Relatório Técnico de Engenharia Reversa e Análise de Segurança: Chess.com Android
 
-**Data da Auditoria:** 02 de Novembro de 2026  
-**Ferramenta Utilizada:** `s_SER_Tools v3.0`  
-**Dispositivo Fonte:** Dispositivo Android conectado via ADB (`RX8TA06NC3W`)  
-**Identificador do Pacote:** `com.chess`  
-**Versão:** `4.10.20-googleplay` (versionCode: `280085`)  
-**Compilação & SDK:** Min SDK 28 (Android 9 Pie) · Target SDK 36 (Android 16) · Compile SDK 36  
+**Data da Auditoria:** 02 de Novembro de 2026
+**Ferramenta Utilizada:** `s_SER_Tools v3.0`
+**Dispositivo Fonte:** Dispositivo Android conectado via ADB (`RX8TA06NC3W`)
+**Identificador do Pacote:** `com.chess`
+**Versão:** `4.10.20-googleplay` (versionCode: `280085`)
+**Compilação & SDK:** Min SDK 28 (Android 9 Pie) · Target SDK 36 (Android 16) · Compile SDK 36
 
 ---
 
@@ -89,4 +89,5 @@ O aplicativo oficial do **Chess.com** representa o estado da arte na engenharia 
 2. Desempenho bruto de processamento de xadrez local via **CEE C++ (libcee.so)**.
 3. Blindagem de memória impecável com **ASLR/NX/Stack Canaries**.
 4. Defesa ativa contra trapaças (*Fair-Play screen detection* e *Approov Mobile Attestation*).
+
 

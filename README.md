@@ -50,10 +50,11 @@ Evoluída a partir do canivete suíço Android (`s_ADB_Tools`), a **s_SER_Tools*
 ```
 c:\dev\s_SER_Tools\
 ├── ser_tools\
-│   ├── core\               # Configurações centrais, console Rich e gerador de relatórios
+│   ├── core\               # Configurações centrais, console Rich, utilitários e relatórios
 │   │   ├── config.py       # Detecção de caminhos, ambiente (Node, Java, ADB, REA)
 │   │   ├── logger.py       # Console Rich, banners visuais e temas de severidade
-│   │   └── reporter.py     # Gerador de relatórios executivos em HTML, Markdown e JSON
+│   │   ├── reporter.py     # Gerador de relatórios executivos em HTML, Markdown e JSON
+│   │   └── utils.py        # Formatação de grandezas (format_bytes), cálculo SHA-256 e sanitização
 │   ├── android\            # Ferramentas Android
 │   │   ├── adb_client.py   # Wrapper avançado de baixo nível ADB
 │   │   ├── extractor.py    # Extração e validação de APKs simples e Split APKs
@@ -78,7 +79,11 @@ c:\dev\s_SER_Tools\
 │   └── cli\
 │       ├── main_cli.py     # Despachante de comandos da linha de comando
 │       └── tui.py          # Interface interativa de terminal moderna (Rich TUI)
-├── adb_tools\              # Fachada de compatibilidade retroativa
+├── scripts\                # Scripts auxiliares e automações do desenvolvedor
+│   ├── doctor.py           # Diagnóstico rápido de ambiente
+│   ├── setup_tools.py      # Instalador e verificador automatizado de ferramentas (JADX/FFDec)
+│   └── quick_audit.py      # Execução de auditoria expressa com exportação de relatórios
+├── adb_tools\              # Fachada de compatibilidade retroativa (re-exporta ser_tools)
 ├── tools\
 │   ├── jadx\               # Motor JADX v1.5.6 (jadx.bat, jadx-gui.bat)
 │   └── ffdec\              # Motor JPEXS FFDec v26.3.0 (ffdec.jar, ffdec.bat)
@@ -86,10 +91,10 @@ c:\dev\s_SER_Tools\
 ├── extracted_apks\          # Diretório dos APKs extraídos
 ├── decompiled_sources\     # Diretório dos códigos-fonte descompilados
 ├── capturas\               # Screenshots salvas dos dispositivos
-├── tests\                  # Suíte de testes automatizados com pytest (30+ testes)
-├── ser-tools.bat           # Lançador principal no Windows
-├── ser.bat                 # Alias rápido do lançador
-├── adb-tools.bat           # Alias legado de compatibilidade
+├── tests\                  # Suíte de testes automatizados com pytest (35+ testes)
+├── ser-tools.bat           # Lançador principal no Windows (UTF-8)
+├── ser.bat                 # Alias rápido do lançador (UTF-8)
+├── adb-tools.bat           # Alias legado de compatibilidade (UTF-8)
 ├── main.py                 # Ponto de entrada Python
 └── requirements.txt        # Dependências do projeto
 ```
@@ -118,9 +123,9 @@ ser-tools doctor
 #### 🛡️ Auditoria de Segurança e Vulnerabilidades
 ```cmd
 # Auditar um aplicativo APK, executável PE, arquivo ASAR ou diretório de projeto
-ser-tools audit extracted_apks/app.apk
+ser-tools audit extracted_apks/com.chess/base.apk
 
-# Auditar e exportar relatório especificamente em HTML e Markdown
+# Auditar e exportar relatório especificamente em HTML, Markdown e JSON
 ser-tools audit C:\caminho\projeto --format all --output reports\auditoria_alvo
 ```
 
@@ -180,16 +185,16 @@ ser-tools rea providers
 ser-tools rea analyze-javascript-application C:\caminho\app
 ```
 
+---
+
 ## 🔬 Estudo de Caso Prático: Engenharia Reversa do Chess.com (com.chess)
 
-A suíte foi validada em campo com a extração e auditoria profunda do aplicativo oficial do **Chess.com** (4.10.20-googleplay) a partir de um aparelho físico conectado via ADB:
-- **Extração Split APKs:** Particionamento AAB (ase.apk, split_config.arm64_v8a.apk, split_config.pt.apk, split_config.xxhdpi.apk) totalizando ~183 MB.
-- **Frontend & Runtime:** Interface reativa baseada em **React Native** com bundle compilado em **Hermes Bytecode (HBC)** (ssets/index.android.bundle), com bindings ultra-rápidos em C++ via **Nitro Modules** e persistência **MMKV**.
-- **Engine Nativa C++ (CEE):** Biblioteca nativa de 51 MB (libcee.so) portando o Stockfish para cálculo de variantes e bots offline (ggressive.bin, alanced.bin, etc.).
-- **Blindagem de Memória & Fair-Play:** Nota **100/100 (A+)** no Checksec ELF64 (PIE, NX, Stack Canaries, Fortify Source) e proteção ativa com **Approov** e DETECT_SCREEN_CAPTURE.
+A suíte foi validada em campo com a extração e auditoria profunda do aplicativo oficial do **Chess.com** (`v4.10.20-googleplay`) a partir de um aparelho físico conectado via ADB:
+- **Extração Split APKs:** Particionamento AAB (`base.apk`, `split_config.arm64_v8a.apk`, `split_config.pt.apk`, `split_config.xxhdpi.apk`) totalizando ~183 MB.
+- **Frontend & Runtime:** Interface reativa baseada em **React Native** com bundle compilado em **Hermes Bytecode (HBC)** (`assets/index.android.bundle`), com bindings ultra-rápidos em C++ via **Nitro Modules** e persistência **MMKV**.
+- **Engine Nativa C++ (CEE):** Biblioteca nativa de 51 MB (`libcee.so`) portando o Stockfish para cálculo de variantes e bots offline (`aggressive.bin`, `balanced.bin`, etc.).
+- **Blindagem de Memória & Fair-Play:** Nota **100/100 (A+)** no Checksec ELF64 (PIE, NX, Stack Canaries, Fortify Source) e proteção ativa com **Approov** e `DETECT_SCREEN_CAPTURE`.
 - **Relatório Completo:** Consulte os detalhes em [reports/relatorio_engenharia_reversa_chess_com.md](reports/relatorio_engenharia_reversa_chess_com.md).
-
----
 
 ---
 

@@ -19,6 +19,7 @@ from ..android.ffdec_manager import FfdecManager
 from ..audit.suite_auditor import SuiteAuditor
 from ..core.config import SuiteConfig
 from ..core.logger import get_console, print_banner
+from ..core.utils import format_bytes
 from ..desktop_bin.checksec import ChecksecScanner
 from ..desktop_bin.pe_analyzer import PEAnalyzer
 from ..desktop_bin.strings_extractor import StringsExtractor
@@ -138,7 +139,7 @@ class SerInteractiveTui:
                     res = self.extractor.extract_package(pkg, self.config.extracted_apks_dir)
                     self.console.print(f"[bold green]✔ Extraído com sucesso para: {res.output_dir}[/bold green]")
                     for f in res.files:
-                        self.console.print(f"   - {f.name} ({f.stat().st_size // 1024} KB)")
+                        self.console.print(f"   - {f.name} ({format_bytes(f.stat().st_size)})")
                 except Exception as e:
                     self.console.print(f"[bold red]Erro ao extrair: {e}[/bold red]")
                 self._pause()

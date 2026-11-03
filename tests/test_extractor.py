@@ -7,16 +7,21 @@ import zipfile
 
 from ser_tools.android.adb_client import AdbClient, AndroidDevice
 from ser_tools.core.config import SuiteConfig
+from ser_tools.core.utils import format_bytes
 
 
 class TestAdbTools(unittest.TestCase):
     def test_format_bytes(self):
-        # Validação de formatação de bytes
-        from adb_tools.cli import format_bytes
+        # Validação canônica via ser_tools.core.utils
         self.assertEqual(format_bytes(500), "500.00 B")
         self.assertEqual(format_bytes(1024), "1.00 KB")
         self.assertEqual(format_bytes(1024 * 1024), "1.00 MB")
         self.assertEqual(format_bytes(5 * 1024 * 1024), "5.00 MB")
+
+        # Validação da fachada de compatibilidade retroativa adb_tools.cli
+        from adb_tools.cli import format_bytes as legacy_format_bytes
+        self.assertEqual(legacy_format_bytes(500), "500.00 B")
+        self.assertEqual(legacy_format_bytes(1024 * 1024), "1.00 MB")
 
     def test_resolve_adb_path_finds_platform_tools(self):
         resolved = AdbClient._resolve_adb_path()
